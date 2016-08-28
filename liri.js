@@ -1,15 +1,9 @@
 var fs = require('fs');
+var os = require('os');
 var request = require('request');
 var Twitter = require('twitter');
 var spotify = require('spotify');
 var keys = require('./keys.js');
-
-var twitter_client = new Twitter({
-    consumer_key: keys.twitterKeys.consumer_key,
-    consumer_secret: keys.twitterKeys.consumer_secret,
-    access_token_key: keys.twitterKeys.access_token_key,
-    access_token_secret: keys.twitterKeys.access_token_secret
-});
 
 var first_argv = process.argv[2];
 var second_argv = process.argv[3];
@@ -25,19 +19,23 @@ var second_argv = process.argv[3];
 function liriCommandRunner(cmd, param) {
     switch (cmd) {
         case "my-tweets":
+            //TODO: IMPLEMENT WAY FOR USER TO PUT IN THEIR OWN ACCOUNT INFORMATION.
             myTweets();
             break;
         case "spotify-this-song":
+            //TODO: VALIDATE SONG STRING BEFORE PASSING TO FUNCTION.
             spotifyThis(param)
             break;
         case "movie-this":
+            //TODO: VALIDATE MOVIE STRING BEFORE PASSING TO FUNCTION.
             movieThis(param)
             break;
         case "do-what-it-says":
+            //TODO: ADD SOMETHING AWESOME TO THIS FUNCTION.
             doWhatItSays();
             break;
         default:
-            console.log(first_argv + ": command not found");
+            console.log(first_argv + " : command not found");
     }
 }
 
@@ -52,6 +50,13 @@ function liriCommandRunner(cmd, param) {
 * @return {}
 */
 function myTweets() {
+
+    var twitter_client = new Twitter({
+        consumer_key: keys.twitterKeys.consumer_key,
+        consumer_secret: keys.twitterKeys.consumer_secret,
+        access_token_key: keys.twitterKeys.access_token_key,
+        access_token_secret: keys.twitterKeys.access_token_secret
+    });
 
     var user = 'RonnyTomasetti';
     var tweet_count = 20;
@@ -84,6 +89,18 @@ function myTweets() {
 */
 function spotifyThis(song) {
 
+    spotify.search({ type: 'track', query: song }, function(error, data) {
+
+        if (error) {
+            console.log('Error occurred: ' + error);
+            return;
+        }
+        else {
+            console.log("**********************************************");
+            console.log("Spotify Data: ", data);
+            console.log("**********************************************");
+        }
+    });
 }
 
 /**
@@ -102,9 +119,14 @@ function spotifyThis(song) {
 */
 function movieThis(movie) {
 
-    request('http://www.google.com', function (error, response, body) {
-        if (!error && response.statusCode == 200) {
-            console.log(body) // Show the HTML for the Google homepage.
+    var queryUrl = 'http://www.omdbapi.com/?t=' + movie +'&y=&plot=long&r=json';
+
+    console.log(queryUrl);
+
+    request(queryUrl, function(error, res, body) {
+
+        if (!error && res.statusCode == 200) {
+            console.log("MOVIE DATA: ", JSON.parse(body))
         }
     });
 }
@@ -121,16 +143,34 @@ function movieThis(movie) {
 */
 function doWhatItSays() {
 
+    fs.readFile("random.txt", "utf8", function(err, random_txt) {
+
+        var ran_txt = random_txt.split(',');
+
+        for(index in ran_txt)
+            console.log("Random Text File: ", ran_txt[index]);
+    });
+
+    var log_entry = "Ran do-what-it-says command";
+
+    appendLogFile(log_entry);
 }
 
 /**
-* Append new data to log.txt file.
+* Appends new log entry to log.txt file.
 *
 * @param {}
 * @return {}
 */
-function appendLogFile() {
+function appendLogFile(log_entry) {
 
+    fs.appendFile('log.txt', log_entry + os.EOL, 'utf8', function(error) {
+
+        if(error)
+            console.log(error);
+        else
+            console.log("-- Logged --")
+    });
 }
 
 /*******************************************
