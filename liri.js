@@ -2,12 +2,14 @@ var fs = require('fs');
 var request = require('request');
 var Twitter = require('twitter');
 var spotify = require('spotify');
-
 var keys = require('./keys.js');
-var twitter_cKey = keys.twitterKeys.consumer_key;
-var twitter_cSecret = keys.twitterKeys.consumer_secret;
-var twitter_atKey = keys.twitterKeys.access_token_key;
-var twitter_atSecret = keys.twitterKeys.access_token_secret;
+
+var twitter_client = new Twitter({
+    consumer_key: keys.twitterKeys.consumer_key,
+    consumer_secret: keys.twitterKeys.consumer_secret,
+    access_token_key: keys.twitterKeys.access_token_key,
+    access_token_secret: keys.twitterKeys.access_token_secret
+});
 
 var first_argv = process.argv[2];
 var second_argv = process.argv[3];
@@ -51,6 +53,21 @@ function liriCommandRunner(cmd, param) {
 */
 function myTweets() {
 
+    var user = 'RonnyTomasetti';
+    var tweet_count = 20;
+
+    twitter_client.get('statuses/user_timeline', {screen_name: user, count: tweet_count}, function(error, tweets, response) {
+
+        if(error)
+            throw error;
+        else {
+            console.log("**********************************************");
+            console.log("TWEETS: ", tweets);
+            console.log("**********************************************");
+            console.log( "RESPONSE", response);
+            console.log("**********************************************");
+        }
+    });
 }
 
 /**
@@ -85,6 +102,11 @@ function spotifyThis(song) {
 */
 function movieThis(movie) {
 
+    request('http://www.google.com', function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log(body) // Show the HTML for the Google homepage.
+        }
+    });
 }
 
 /**
