@@ -20,7 +20,7 @@ var second_argv = process.argv[3];
 function liriCommandRunner(cmd, param) {
     switch (cmd) {
         case "my-tweets":
-            //TODO: IMPLEMENT WAY FOR USER TO PUT IN THEIR OWN ACCOUNT INFORMATION.
+            //TODO: IMPLEMENT WAY FOR USER TO INPUT TWITTER ACCOUNT INFORMATION.
             myTweets();
             break;
         case "spotify-this-song":
@@ -53,13 +53,13 @@ function liriCommandRunner(cmd, param) {
 function myTweets() {
 
     var twitter_client = new Twitter({
-        consumer_key: keys.twitterKeys.consumer_key,
-        consumer_secret: keys.twitterKeys.consumer_secret,
-        access_token_key: keys.twitterKeys.access_token_key,
-        access_token_secret: keys.twitterKeys.access_token_secret
+        consumer_key: keys.twitter_keys.consumer_key,
+        consumer_secret: keys.twitter_keys.consumer_secret,
+        access_token_key: keys.twitter_keys.access_token_key,
+        access_token_secret: keys.twitter_keys.access_token_secret
     });
 
-    var user = 'RonnyTomasetti';
+    var user = 'laravelphp';
     var tweet_count = 20;
 
     twitter_client.get('statuses/user_timeline', {screen_name: user, count: tweet_count}, function(error, tweets) {
@@ -67,28 +67,24 @@ function myTweets() {
         if (error)
             throw error;
         else {
-            var data = [];
-            var log_options = {
-                    keysColor  : 'green',
-                    dashColor  : 'green',
-                    stringColor: 'white'
-                    };
+            var tweet_data = [];
 
             for ( i in tweets ) {
-                var item = {
-                        "Created"  : tweets[i].created_at,
-                        "Tweet"    : tweets[i].text,
-                        "Retweeted": tweets[i].retweet_count,
-                        "Favorited": tweets[i].favorite_count
+                var data = {
+                        "Created"   : tweets[i].created_at,
+                        "Tweet"     : tweets[i].text,
+                        "Retweeted" : tweets[i].retweet_count,
+                        "Favorited" : tweets[i].favorite_count
                         };
-                data.push(item);
+                tweet_data.push(data);
             }
 
-            console.log("------------------------------------------------------------");
-            console.log("Successfully retrieved " + tweets.length + " tweets [ max 20 ] from Twitter.com");
-            console.log("------------------------------------------------------------");
-            console.log(prettyjson.render(data, log_options));
-            console.log("------------------------------------------------------------");
+            console.log("---------------------------- START --------------------------------");
+            console.log("Successfully retrieved " + tweets.length + " tweets (maximum 20) from Twitter.");
+            console.log("===================================================================");
+            console.log(prettyjson.render(tweet_data, { keysColor  : 'green', stringColor: 'white' }));
+            console.log("===================================================================");
+            console.log("---------------------------- END ----------------------------------");
         }
     });
 }
@@ -99,7 +95,7 @@ function myTweets() {
 *
 * Description:
 * Console output containing the following song data: Song title, album title,
-* artist(s), preview link for Spotify. If no song is provided, default will
+* artist(s), preview url for Spotify. If no song is provided, default will
 * display data for "The Sign" by Ace of Base.
 *
 * @param {String} song Title of song to query using Spotify API.
@@ -108,20 +104,39 @@ function myTweets() {
 function spotifyThis(song) {
 
     var spotify_client = new Spotify({
-        clientId : '3ca39f9c22294dde999f49f6d129c02e',
-        clientSecret : '5cc62e1dbe1847d4bdb0eb340d6ea7eb'
+        clientId    : keys.spotify_keys.client_id,
+        clientSecret: keys.spotify_keys.client_secret
     });
 
-    spotify_client.searchTracks(song).then( function(data) {
+    spotify_client.searchTracks(song).then(function(res) {
 
-        console.log('I got ' + data.body.tracks.total + ' results!');
+        // console.log("************** DEBUGGING PURPOSES ONLY *****************");
+        // console.log("RESPONSE HREF: " + res.body.tracks.href);
+        // console.log("********************************************************");
 
-        var firstPage = data.body.tracks.items;
-        console.log('The tracks in the first page are.. (popularity in parentheses)');
+        var spot_data = [];
+        var tracks = res.body.tracks.items;
 
-        firstPage.forEach(function(track, index) {
-            console.log(index + ': ' + track.name + ' (' + track.popularity + ')');
-        });
+        for ( i in tracks ) {
+            var data = {
+                    "Track"      : tracks[i].name,
+                    "Album"      : tracks[i].album.name,
+                    "Artist(s)"  : tracks[i].artists[0].name,
+                    "Preview URL": tracks[i].preview_url
+                    };
+            spot_data.push(data);
+        }
+
+        //TODO: RUN THROUGH ANOTHER LOOP IN ORDER TO PRINT ARTIST(S) IF THERE ARE MORE THAN ONE.
+
+        var total_items = tracks.length;
+
+        console.log("---------------------------- START --------------------------------");
+        console.log("Successfully retrieved " + total_items + " items from Spotify");
+        console.log("===================================================================");
+        console.log(prettyjson.render(spot_data, { keysColor  : 'green', stringColor: 'white' }));
+        console.log("===================================================================");
+        console.log("---------------------------- END ----------------------------------");
 
     }, function(error) {
             console.error(error);
@@ -144,15 +159,33 @@ function spotifyThis(song) {
 */
 function movieThis(movie) {
 
-    var query_url = 'http://www.omdbapi.com/?t=' + movie +'&y=&plot=long&r=json';
-
-    console.log(query_url);
+    var query_url = 'http://www.omdbapi.com/?t=' + movie +'&y=&plot=long&tomatoes=true&r=json';
 
     request(query_url, function(error, res, body) {
 
         if (!error && res.statusCode == 200) {
-            console.log("MOVIE DATA: ", JSON.parse(body))
+
+            var movie_data = {
+                "Title"                 : JSON.parse(body).Title,
+                "Released"              : JSON.parse(body).Released,
+                "Country"               : JSON.parse(body).Country,
+                "Language(s)"           : JSON.parse(body).Language,
+                "Actors"                : JSON.parse(body).Actors,
+                "IMDB Rating"           : JSON.parse(body).imdbRating,
+                "Rotten Tomatoes Rating": JSON.parse(body).tomatoRating,
+                "Rotten Tomatoes URL"   : JSON.parse(body).tomatoURL,
+                "Plot"                  : JSON.parse(body).Plot
+            }
+
+            console.log("---------------------------- START --------------------------------");
+            console.log("Successfully retrieved OMDB results for " + movie_data.Title + ".");
+            console.log("===================================================================");
+            console.log(prettyjson.render(movie_data, { keysColor  : 'green', stringColor: 'white' }));
+            console.log("===================================================================");
+            console.log("---------------------------- END ----------------------------------");
         }
+        else
+            console.error(error);
     });
 }
 
@@ -171,13 +204,23 @@ function doWhatItSays() {
     fs.readFile("random.txt", "utf8", function(err, random_txt) {
 
         var ran_txt = random_txt.split(',');
+        var func = ran_txt[0];
+        var param = ran_txt[1];
 
-        for ( i in ran_txt)
-            console.log("Random Text File: ", ran_txt[i]);
+        switch (func) {
+            case "my-tweets":
+                myTweets();
+                break;
+            case "spotify-this-song":
+                spotifyThis(param);
+                break;
+            case "movie-this":
+                movieThis(param);
+                break;
+        }
     });
 
     var log_entry = "Ran do-what-it-says command";
-
     appendLogFile(log_entry);
 }
 
