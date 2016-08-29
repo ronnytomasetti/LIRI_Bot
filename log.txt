@@ -1,9 +1,15 @@
-Ran do-what-it-says command
-Ran do-what-it-says command
-Ran do-what-it-says command
-Ran do-what-it-says command
-Ran do-what-it-says command
-Ran do-what-it-says command
-Ran do-what-it-says command
-Ran do-what-it-says command
-Ran do-what-it-says command
+Mon Aug 29 2016 09:33:00 GMT-0400 (EDT): Executed my-tweets
+Mon Aug 29 2016 09:33:38 GMT-0400 (EDT): Executed my-tweets
+Mon Aug 29 2016 09:33:59 GMT-0400 (EDT): Executed spotify-this-song with argument '10 Bands'
+Mon Aug 29 2016 09:36:27 GMT-0400 (EDT): Executed spotify-this-song with argument '10 Bands'
+Mon Aug 29 2016 09:37:02 GMT-0400 (EDT): Executed movie-this with argument 'Frozen'
+Mon Aug 29 2016 09:40:18 GMT-0400 (EDT): Executed do-what-it-says
+Mon Aug 29 2016 09:40:18 GMT-0400 (EDT): Executed spotify-this-song with argument 'I Want it That Way'
+Mon Aug 29 2016 09:42:37 GMT-0400 (EDT): Executed do-what-it-says
+Mon Aug 29 2016 09:42:37 GMT-0400 (EDT): Executed spotify-this-song with argument 'I Want it That Way'
+Mon Aug 29 2016 10:09:47 GMT-0400 (EDT): Executed do-what-it-says
+Mon Aug 29 2016 10:11:06 GMT-0400 (EDT): Executed do-what-it-says
+Mon Aug 29 2016 10:11:34 GMT-0400 (EDT): Executed do-what-it-says
+Mon Aug 29 2016 10:11:34 GMT-0400 (EDT): Executed spotify-this-song with argument 'I Want it That Way'
+Mon Aug 29 2016 17:57:40 GMT-0400 (EDT): Executed do-what-it-says
+Mon Aug 29 2016 17:57:40 GMT-0400 (EDT): Executed spotify-this-song with argument 'I Want it That Way'

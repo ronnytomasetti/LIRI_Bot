@@ -87,6 +87,8 @@ function myTweets() {
             console.log("---------------------------- END ----------------------------------");
         }
     });
+
+    appendLogFile("Executed my-tweets");
 }
 
 /**
@@ -141,6 +143,8 @@ function spotifyThis(song) {
     }, function(error) {
             console.error(error);
     });
+
+    appendLogFile("Executed spotify-this-song with argument " + "'" + song  + "'");
 }
 
 /**
@@ -187,6 +191,8 @@ function movieThis(movie) {
         else
             console.error(error);
     });
+
+    appendLogFile("Executed movie-this with argument " + "'" + movie  + "'");
 }
 
 /**
@@ -207,6 +213,8 @@ function doWhatItSays() {
         var func = ran_txt[0];
         var param = ran_txt[1];
 
+        console.log("PARAM: ", param);
+
         switch (func) {
             case "my-tweets":
                 myTweets();
@@ -220,8 +228,7 @@ function doWhatItSays() {
         }
     });
 
-    var log_entry = "Ran do-what-it-says command";
-    appendLogFile(log_entry);
+    appendLogFile("Executed do-what-it-says");
 }
 
 /**
@@ -232,12 +239,11 @@ function doWhatItSays() {
 */
 function appendLogFile(log_entry) {
 
-    fs.appendFile('log.txt', log_entry + os.EOL, 'utf8', function(error) {
+    var dtg = new Date() + ': ';
 
+    fs.appendFile('log.txt', dtg + log_entry + os.EOL, 'utf8', function(error) {
         if (error)
             throw error;
-        else
-            console.log("-- Logged --")
     });
 }
 
